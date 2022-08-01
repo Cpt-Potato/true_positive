@@ -1,0 +1,37 @@
+version: "3"
+
+
+services:
+  postgres:
+    image: postgres:14.4-alpine
+    container_name: "true_positive_postgres"
+    restart: on-failure
+    # make it available from localhost
+    # or use "expose: - 5432" for in-container access only
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "admin"
+      POSTGRES_DB: "true_positive"
+    volumes:
+      # connect db to volume not to lose data after stop
+      - postgres-data:/var/lib/postgresql/data
+      # populate db with data (pg_dump.sql)
+#      - .:/docker-entrypoint-initdb.d
+
+  bot:
+    build: .
+    container_name: "true_positive_bot"
+    command: ["python", "app.py"]
+    restart: on-failure
+    ports:
+      - "8000:8000"
+    environment:
+      # connect to postgres container
+      DATABASE_URL: "postgresql+asyncpg://admin:admin@postgres:5432/true_positive"
+    depends_on:
+      - postgres
+
+volumes:
+  postgres-data:
