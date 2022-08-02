@@ -15,5 +15,5 @@ RUN pip install --no-cache-dir --upgrade -r requirements.txt
 # add app
 COPY . .
 
-# start server
+# start bot
 CMD ["python", "app.py"]

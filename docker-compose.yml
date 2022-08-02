@@ -15,10 +15,7 @@ services:
       POSTGRES_PASSWORD: "admin"
       POSTGRES_DB: "true_positive"
     volumes:
-      # connect db to volume not to lose data after stop
-      - postgres-data:/var/lib/postgresql/data
-      # populate db with data (pg_dump.sql)
-#      - .:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
 
   bot:
     build: .
@@ -28,10 +25,9 @@ services:
     ports:
       - "8000:8000"
     environment:
-      # connect to postgres container
       DATABASE_URL: "postgresql+asyncpg://admin:admin@postgres:5432/true_positive"
     depends_on:
       - postgres
 
 volumes:
-  postgres-data:
+  postgres_data:
