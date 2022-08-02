@@ -36,7 +36,9 @@ def register_handlers(dp: Dispatcher):
     dp.register_message_handler(
         admin_logout, Text(equals="Выйти", ignore_case=True), state=FSMState.admin
     )
-    dp.register_message_handler(screenshot, state="*")
+    dp.register_message_handler(
+        screenshot, Text(contains="http", ignore_case=True), state="*"
+    )
 
 
 async def set_commands(bot: Bot):
