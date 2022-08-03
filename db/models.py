@@ -1,4 +1,4 @@
-from sqlalchemy import Column, DateTime, Integer, Text, func
+from sqlalchemy import Column, DateTime, Integer, Text, func, String
 
 from db.base import Base
 
@@ -8,7 +8,7 @@ class Statistic(Base):
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
-    url = Column(Text)
+    url = Column(String(255))
     create_date = Column(DateTime, server_default=func.now())
 
     # required in order to access columns with server defaults
