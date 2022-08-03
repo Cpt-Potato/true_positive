@@ -1,12 +1,24 @@
 from aiogram import types
 
-hello_message = "Чтобы получить скриншот веб-сайта, напишите его в сообщении"
-help_message = "Для перезапуска нажмите одноимённую кнопку или введите /start"
+hello_message = (
+    "Чтобы получить скриншот веб-сайта, напишите его в сообщении "
+    "(в формате https://www.google.com)"
+)
+help_message = (
+    "Для перезапуска нажмите одноимённую кнопку или введите /start, "
+    "формат веб-сайта для ввода https://www.google.com"
+)
 
-start_buttons = ["Перезапуск", "Помощь"]
-user_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-user_keyboard.add(*start_buttons)
 
-buttons = ["Статистика", "Выйти"]
-admin_keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-admin_keyboard.add(*buttons)
+def get_user_keyboard():
+    buttons = ["Перезапуск", "Помощь"]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(*buttons)
+    return keyboard
+
+
+def get_admin_keyboard():
+    buttons = ["Статистика", "Выйти"]
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    keyboard.add(*buttons)
+    return keyboard
