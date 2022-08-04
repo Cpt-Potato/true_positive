@@ -1,10 +1,10 @@
-from sqlalchemy import Column, DateTime, Integer, Text, func, String
+from sqlalchemy import Column, DateTime, Integer, String, func
 
 from db.base import Base
 
 
-class Statistic(Base):
-    __tablename__ = "statistic"
+class Statistics(Base):
+    __tablename__ = "statistics"
 
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer)
