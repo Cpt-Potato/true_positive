@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from aiogram import types
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.types import (
@@ -13,7 +15,7 @@ from bot.keyboard import (
     hello_message,
     help_message,
 )
-from bot.services import check_url, get_screenshot
+from bot.services import check_url, get_screenshot_and_info
 from config import bot, logger
 from db.models import Statistics
 from db.services import get_statistics, write_to_db
@@ -39,7 +41,7 @@ async def send_screenshot(message: types.Message):
     is_valid_url = await check_url(url)
     if not is_valid_url:
         return await message.answer(
-            "Неверный адрес или сайт недоступен. "
+            "Неверный адрес или сайт недоступен."
             "Формат веб-сайта для ввода https://www.google.com"
         )
     logger.info(f"Screenshot requested for {url}")
@@ -52,26 +54,26 @@ async def send_screenshot(message: types.Message):
         caption="Запрос принят. Получение скриншота...",
         reply_to_message_id=message.message_id,
     )
-    try:
-        url_domain, title, filename, result_time = await get_screenshot(user_id, url)
+    url_domain, title, file_path, result_time = await get_screenshot_and_info(
+        user_id, url
+    )
+    if Path(file_path).exists():
         file = InputMedia(
-            media=InputFile(filename),
+            media=InputFile(file_path),
             caption=f"{title}, {url}, время обработки: {result_time:.2f} сек",
         )
-    except Exception as e:
-        logger.error(f"Something went wrong while taking screenshot, {e}")
-        await msg.edit_caption("Что-то пошло не так. Попробуйте ещё раз позже.")
-    # send statistics to db
-    row = Statistics(user_id=user_id, url=url)
-    await write_to_db(row)
-    logger.info(f"Screenshot sent. {title}, {url}, {result_time:.2f} sec")
-    # edit the message
-    keyboard = InlineKeyboardMarkup()
-    button = InlineKeyboardButton(
-        f"Подробнее", url=f"https://www.whois.com/whois/{url_domain}"
-    )
-    keyboard.row(button)
-    return await msg.edit_media(file, reply_markup=keyboard)
+        # send statistics to db
+        await write_to_db(Statistics(user_id=user_id, url=url))
+        logger.info(f"Screenshot sent. {title}, {url}, {result_time:.2f} sec")
+        # edit the message
+        keyboard = InlineKeyboardMarkup()
+        button = InlineKeyboardButton(
+            f"Подробнее", url=f"https://www.whois.com/whois/{url_domain}"
+        )
+        keyboard.row(button)
+        return await msg.edit_media(file, reply_markup=keyboard)
+    logger.warning(f"Something went wrong while taking screenshot for {url}")
+    return await msg.edit_caption("Что-то пошло не так. Попробуйте ещё раз позже.")
 
 
 async def admin(message: types.Message):

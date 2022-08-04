@@ -1,7 +1,6 @@
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Tuple
 
 import aiohttp
 from aiohttp import ClientConnectorError, InvalidURL
@@ -11,10 +10,10 @@ from tldextract import tldextract
 from config import logger
 
 
-async def get_screenshot(
+async def get_screenshot_and_info(
     user_id: str, url: str
-) -> Exception | tuple[str, str, str, float]:
-    """Gets screenshot of the page, saves it to file, gets page title
+) -> tuple[str, str, str, float]:
+    """Gets screenshot of the page, saves it to file, gets page title and domain
     and calculates working time"""
     start_time = time.time()
     current_date = datetime.now()
@@ -22,7 +21,7 @@ async def get_screenshot(
     url_domain = tldextract.extract(url).registered_domain
     # create directory if it doesn't exist
     Path(f"./media/{current_date.date()}").mkdir(parents=True, exist_ok=True)
-    filename = (
+    file_path = (
         f"./media/{current_date.date()}/{current_time}_{user_id}_{url_domain}.png"
     )
     try:
@@ -34,12 +33,13 @@ async def get_screenshot(
         page = await browser.newPage()
         await page.goto(url, {"waitUntil": "networkidle2"})
         title = await page.title()
-        await page.screenshot({"path": filename, "fullPage": True})
+        await page.screenshot({"path": file_path, "fullPage": True})
         await browser.close()
     except Exception as e:
-        return e
+        logger.error(e)
+        return url_domain, "", file_path, time.time() - start_time
     result_time = time.time() - start_time
-    return url_domain, title, filename, result_time
+    return url_domain, title, file_path, result_time
 
 
 async def check_url(url: str) -> bool:
