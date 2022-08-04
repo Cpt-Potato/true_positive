@@ -18,6 +18,7 @@ async def get_statistics() -> str:
     statement = select(Statistics).where(Statistics.create_date >= date.today())
     result = await session.execute(statement)
     for stat in result.scalars().all():
-        statistics += f"{stat.user_id}, {stat.url}, {stat.create_date.replace(tzinfo=timezone.utc).astimezone(tz=None).strftime('%d-%m-%Y_%H:%M:%S')}"
+        statistics += f"{stat.user_id}, {stat.url}, {stat.create_date.strftime('%d-%m-%Y_%H:%M:%S')}"
         statistics += "\n"
     return statistics or "Статистика за сегодня пуста"
+# .replace(tzinfo=timezone.utc).astimezone(tz=None)
