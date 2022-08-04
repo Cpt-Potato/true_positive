@@ -11,7 +11,7 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 TOKEN = os.getenv("TOKEN")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 
-bot = Bot(token=TOKEN)  # , parse_mode=types.ParseMode.HTML)
+bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=MemoryStorage())
 
 logger = logging.getLogger(__name__)
