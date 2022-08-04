@@ -1,24 +1,20 @@
 import asyncio
 
 from aiogram import Bot, Dispatcher
-from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher.filters import Text
 from aiogram.types import BotCommand
 
-from config import ADMIN_PASSWORD, TOKEN, logger
-from db.base import create_table
 from bot.handlers import (
     FSMState,
     admin,
     admin_logout,
     help_info,
-    screenshot,
-    show_statistic,
+    send_screenshot,
+    show_statistics,
     start,
 )
-
-bot = Bot(token=TOKEN)  # , parse_mode=types.ParseMode.HTML)
-dp = Dispatcher(bot, storage=MemoryStorage())
+from config import ADMIN_PASSWORD, bot, dp, logger
+from db.base import create_table
 
 
 def register_handlers(dp: Dispatcher):
@@ -26,10 +22,13 @@ def register_handlers(dp: Dispatcher):
     dp.register_message_handler(
         start, Text(equals="Перезапуск", ignore_case=True), state="*"
     )
-    dp.register_message_handler(help_info, Text(equals="Помощь", ignore_case=True))
+    dp.register_message_handler(help_info, commands="help", state="*")
+    dp.register_message_handler(
+        help_info, Text(equals="Помощь", ignore_case=True), state="*"
+    )
     dp.register_message_handler(admin, Text(equals=ADMIN_PASSWORD), state="*")
     dp.register_message_handler(
-        show_statistic,
+        show_statistics,
         Text(equals="Статистика", ignore_case=True),
         state=FSMState.admin,
     )
@@ -37,7 +36,7 @@ def register_handlers(dp: Dispatcher):
         admin_logout, Text(equals="Выйти", ignore_case=True), state=FSMState.admin
     )
     dp.register_message_handler(
-        screenshot, Text(contains="http", ignore_case=True), state="*"
+        send_screenshot, Text(contains="http", ignore_case=True), state="*"
     )
 
 
