@@ -49,7 +49,7 @@ async def send_screenshot(message: types.Message):
     # send temp message
     loading = InputFile("./media/loading.png")
     msg = await bot.send_photo(
-        chat_id=user_id,
+        chat_id=message.chat.id,
         photo=loading,
         caption="Запрос принят. Получение скриншота...",
         reply_to_message_id=message.message_id,
