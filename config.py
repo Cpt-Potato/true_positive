@@ -16,5 +16,8 @@ dp = Dispatcher(bot, storage=MemoryStorage())
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    level=logging.INFO, format="%(levelname)s - %(asctime)s - %(name)s - %(message)s"
+    filename="log.txt",
+    filemode="w",
+    level=logging.INFO,
+    format="%(levelname)s - %(asctime)s - %(name)s - %(message)s",
 )
