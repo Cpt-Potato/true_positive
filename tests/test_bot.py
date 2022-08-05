@@ -36,6 +36,11 @@ class TestBotEcho:
 class TestDB:
     @pytest.mark.asyncio
     async def test_show_statistics(self):
+        """Only for empty DB"""
         message_mock = AsyncMock()
         await show_statistics(message=message_mock)
         message_mock.answer.assert_called_with("Статистика за сегодня пуста")
+
+
+if __name__ == "__main__":
+    pytest.main()
