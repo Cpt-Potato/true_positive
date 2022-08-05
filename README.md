@@ -18,4 +18,5 @@ git clone https://github.com/Cpt-Potato/true_positive.git
 docker-compose up -d
 ```
 * Открыть Telegram и найти там вашего бота для указанного токена
+* Если хотите использовать бота в группе, нужно отключить Privacy через BotFather (отлавливаются только команды, их текстовые варианты и ссылки с http(s))
 * Пользоваться :)
